@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <queue>
 #include <stack>
 #include <list>
@@ -7,7 +8,7 @@
 using namespace std;
 
 struct node{
-    char nvalue;
+    int nvalue;
     struct node *next;
     struct edge *edges;
     bool visited;
@@ -27,7 +28,7 @@ public:
         head = nullptr;
     }
 
-    void add(char value) {
+    void add(int value) {
 
         struct node *nprobe, *node;
         node = new(struct node);
@@ -46,7 +47,7 @@ public:
         length++;
     }
 
-    void addedge(char origin, char dest){
+    void addedge(int origin, int dest){
 
         struct node *nprobe, *mprobe;
         struct edge *edge, *eprobe;
@@ -63,7 +64,6 @@ public:
                 return;
             }
         }
-
         eprobe = nprobe->edges;
 
         for (int i = 0; i < length; i++) {
@@ -109,12 +109,16 @@ public:
         }
     }
 
-    void DFS(char start) {
+
+    void DFS(int start) {
+        ofstream outputfile;
+        outputfile.open("output.txt", ios_base::app);
         struct node *dnode, *linked;
         struct edge *eprobe;
         dnode = head;
+        outputfile<<"Depth First Search Starting from "<<start<<": ";
 
-        stack<char> s;
+        stack<node*> s;
 
         for (int i = 0; i < length; i++) {
             dnode->visited = false;
@@ -135,32 +139,75 @@ public:
 
         eprobe = dnode->edges;
         dnode->visited = true;
-        s.push(dnode->nvalue);
-        cout<<dnode->nvalue;
+        s.push(dnode);
+        outputfile<<dnode->nvalue;
+        eprobe = eprobe->next;
 
         while (!s.empty()) {
             while (eprobe->next != nullptr) {
-                linked = eprobe->link;
-                if (linked->visited != true) {
-                    dnode = eprobe->link;
-                    dnode->visited = true;
-                    eprobe = dnode->edges;
-                    s.push(dnode->nvalue);
-                    cout<<" "<<dnode->nvalue;
-                } else {
-                    eprobe = eprobe->next;
-                }
+
+                if (!eprobe->link->visited) {
+                    linked = eprobe->link;
+                    linked->visited = true;
+                    s.push(linked);
+                    outputfile<<" "<<linked->nvalue;
+                    eprobe = linked->edges->next;
+                } else {eprobe = eprobe->next;}
             }
-            char sholder = s.top();
             s.pop();
-            dnode = head;
-            for (int i = 0; i < length; i++) {
-                if (dnode->nvalue != sholder) {
+        }
+        outputfile<<endl;
+
+    }
+
+  void BFS(int start) {
+        ofstream outputfile;
+        outputfile.open("output.txt", ios_base::app);
+        struct node *dnode, *linked;
+        struct edge *eprobe;
+        dnode = head;
+        outputfile<<"Breadth First Search Starting from "<<start<<": ";
+
+        queue<node*> s;
+
+        for (int i = 0; i < length; i++) {
+            dnode->visited = false;
+            dnode = dnode->next;
+        }
+
+        dnode = head;
+
+        for (int i = 0; i < length; i++) {
+            if (dnode->nvalue != start) {
                 dnode = dnode->next;
-                }
+            }
+            if (i == length -1 && dnode->nvalue != start){
+                cout<<"Node not found in graph"<<endl;
+                return;
             }
         }
+
+        eprobe = dnode->edges;
+        dnode->visited = true;
+        s.push(dnode);
+        eprobe = eprobe->next;
+
+        while (!s.empty()) {
+            outputfile<<s.front()->nvalue<<" ";
+            eprobe = s.front()->edges->next;
+            while (eprobe->next != nullptr) {
+                if (!eprobe->link->visited) {
+                    linked = eprobe->link;
+                    linked->visited = true;
+                    s.push(linked);
+                } else {eprobe = eprobe->next;}
+            }
+            s.pop();
+        }
+        outputfile<<endl;
+
     }
+
 };
 
 
@@ -169,33 +216,35 @@ int main()
 {
 
   List* l= new List();
-  l->add('A');
-  l->add('B');
-  l->add('C');
-  l->add('D');
-  l->add('E');
-  l->add('F');
+  l->add(1);
+  l->add(2);
+  l->add(3);
+  l->add(4);
+  l->add(5);
+  l->add(6);
 
-  l->addedge('F','B');
-  l->addedge('F','D');
-  l->addedge('E','A');
-  l->addedge('E','B');
-  l->addedge('D','B');
-  l->addedge('D','F');
-  l->addedge('D','C');
-  l->addedge('C','D');
-  l->addedge('C','A');
-  l->addedge('B','E');
-  l->addedge('B','D');
-  l->addedge('B','F');
-  l->addedge('A','C');
-  l->addedge('A','E');
+  l->addedge(6,2);
+  l->addedge(6,4);
+  l->addedge(5,1);
+  l->addedge(5,2);
+  l->addedge(4,2);
+  l->addedge(4,6);
+  l->addedge(4,3);
+  l->addedge(3,4);
+  l->addedge(3,1);
+  l->addedge(2,5);
+  l->addedge(2,4);
+  l->addedge(2,6);
+  l->addedge(1,3);
+  l->addedge(1,5);
 
 
-  l->DFS('D');
+
 
   l->display();
 
+  l->DFS(4);
+  l->BFS(4);
 
   delete l;
 
