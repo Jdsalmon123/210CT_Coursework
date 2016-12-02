@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1480716374 source:/home/jdsalmon/Documents/210CT_Coursework/Question 15/main.cpp
+	<iostream>
+	<fstream>
+	<queue>
+	<stack>
+	<list>
+

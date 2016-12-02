@@ -1,0 +1,1 @@
+Depth First Search Starting from 5: 5 1 3 4 2 6
