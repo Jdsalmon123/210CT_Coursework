@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1480110488 source:/home/jdsalmon/Documents/210CT_Coursework/Question 8/main.cpp
+	<iostream>
+	<cctype>
+	<string>
+
